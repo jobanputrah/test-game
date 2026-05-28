@@ -286,6 +286,42 @@
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
+    /* Insights chart */
+    .insights-wrap {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1rem 1rem 0.875rem;
+      margin-bottom: 2rem;
+    }
+    .insights-empty {
+      text-align: center;
+      color: #475569;
+      font-size: 0.875rem;
+      padding: 2rem 0;
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin-top: 0.875rem;
+      padding-top: 0.875rem;
+      border-top: 1px solid #334155;
+    }
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+    .chart-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
     @media (max-width: 480px) {
       main { padding: 1rem; }
       .scoreboard th, .scoreboard td { padding: 0.6rem 0.75rem; }
@@ -331,6 +367,13 @@
     </div>
 
     <div class="section-header">
+      <h3>Insights</h3>
+    </div>
+    <div class="insights-wrap">
+      <div id="insightsChart"></div>
+    </div>
+
+    <div class="section-header">
       <h3>Rounds</h3>
       <button class="btn sm" onclick="openAddRoundModal()">+ Round</button>
     </div>
@@ -358,6 +401,13 @@
         <thead><tr><th>Player</th><th style="text-align:right">Total</th></tr></thead>
         <tbody id="roScoreboardBody"></tbody>
       </table>
+    </div>
+
+    <div class="section-header">
+      <h3>Insights</h3>
+    </div>
+    <div class="insights-wrap">
+      <div id="roInsightsChart"></div>
     </div>
 
     <div class="section-header">
@@ -532,6 +582,7 @@
     document.getElementById('sessionMeta').textContent =
       `${s.players.length} player${s.players.length !== 1 ? 's' : ''} · ${s.rounds.length} round${s.rounds.length !== 1 ? 's' : ''}`;
     renderScoreboard(s);
+    renderInsights(s, 'insightsChart');
     renderRounds(s);
   }
 
@@ -755,12 +806,94 @@
         <td class="score">${t[p]}</td>
       </tr>`).join('');
 
+    renderInsights(s, 'roInsightsChart');
+
     const list = document.getElementById('roRoundsList');
     if (!s.rounds.length) {
       list.innerHTML = '<div class="empty-state"><div class="icon">&#127919;</div><p>No rounds yet.</p></div>';
       return;
     }
     list.innerHTML = s.rounds.map((r, i) => roundCardHTML(r, i, s.players, false)).join('');
+  }
+
+  // Insights chart
+  const CHART_COLORS = ['#3b82f6','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
+
+  function renderInsights(s, containerId) {
+    const el = document.getElementById(containerId);
+    if (!s.players.length || !s.rounds.length) {
+      el.innerHTML = '<div class="insights-empty">Add players and at least one round to see the chart.</div>';
+      return;
+    }
+
+    const cum = {};
+    s.players.forEach(p => {
+      let sum = 0;
+      cum[p] = [0, ...s.rounds.map(r => (sum += r.scores[p] ?? 0, sum))];
+    });
+
+    const n = s.rounds.length;
+    const allVals = s.players.flatMap(p => cum[p]);
+    const rawMin = Math.min(...allVals);
+    const rawMax = Math.max(...allVals);
+    const span = rawMax - rawMin || 1;
+    const pad = span * 0.12;
+    const yMin = rawMin - pad;
+    const yMax = rawMax + pad;
+
+    const W = 560, H = 230;
+    const pL = 48, pR = 14, pT = 14, pB = 34;
+    const cW = W - pL - pR;
+    const cH = H - pT - pB;
+
+    const xS = i => pL + (n > 0 ? (i / n) * cW : 0);
+    const yS = v => pT + cH - ((v - yMin) / (yMax - yMin)) * cH;
+
+    const tickCount = 5;
+    const tickStep = (yMax - yMin) / tickCount;
+    const ticks = Array.from({ length: tickCount + 1 }, (_, i) => {
+      const v = yMin + i * tickStep;
+      return { v, y: yS(v) };
+    });
+
+    const stride = n <= 10 ? 1 : n <= 20 ? 2 : Math.ceil(n / 10);
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;overflow:visible">`;
+
+    ticks.forEach(({ v, y }) => {
+      svg += `<line x1="${pL}" y1="${y.toFixed(1)}" x2="${W - pR}" y2="${y.toFixed(1)}" stroke="#334155" stroke-width="1"/>`;
+      svg += `<text x="${pL - 6}" y="${y.toFixed(1)}" text-anchor="end" dominant-baseline="middle" fill="#64748b" font-size="11" font-family="sans-serif">${Math.round(v)}</text>`;
+    });
+
+    for (let i = 0; i <= n; i++) {
+      if (i !== 0 && i !== n && (i % stride) !== 0) continue;
+      const x = xS(i);
+      const label = i === 0 ? 'Start' : `R${i}`;
+      svg += `<text x="${x.toFixed(1)}" y="${H - pB + 18}" text-anchor="middle" fill="#64748b" font-size="11" font-family="sans-serif">${label}</text>`;
+    }
+
+    s.players.forEach((p, pi) => {
+      const color = CHART_COLORS[pi % CHART_COLORS.length];
+      const pts = cum[p];
+      const d = pts.map((v, i) => `${i === 0 ? 'M' : 'L'}${xS(i).toFixed(1)},${yS(v).toFixed(1)}`).join(' ');
+      svg += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    });
+
+    s.players.forEach((p, pi) => {
+      const color = CHART_COLORS[pi % CHART_COLORS.length];
+      cum[p].forEach((v, i) => {
+        svg += `<circle cx="${xS(i).toFixed(1)}" cy="${yS(v).toFixed(1)}" r="4" fill="${color}" stroke="#1e293b" stroke-width="2"/>`;
+      });
+    });
+
+    svg += '</svg>';
+
+    const legend = s.players.map((p, pi) => {
+      const color = CHART_COLORS[pi % CHART_COLORS.length];
+      return `<div class="chart-legend-item"><span class="chart-legend-dot" style="background:${color}"></span>${esc(p)}</div>`;
+    }).join('');
+
+    el.innerHTML = svg + `<div class="chart-legend">${legend}</div>`;
   }
 
   function openModal(id) { document.getElementById(id).classList.add('open'); }
