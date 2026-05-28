@@ -48,7 +48,6 @@
     .view { display: none; }
     .view.active { display: block; }
 
-    /* Sessions list */
     .sessions-header {
       display: flex;
       justify-content: space-between;
@@ -69,10 +68,7 @@
       transition: background 0.15s;
     }
     .btn:hover { background: #2563eb; }
-    .btn.secondary {
-      background: #334155;
-      color: #e2e8f0;
-    }
+    .btn.secondary { background: #334155; color: #e2e8f0; }
     .btn.secondary:hover { background: #475569; }
     .btn.danger { background: #ef4444; }
     .btn.danger:hover { background: #dc2626; }
@@ -103,7 +99,6 @@
     .empty-state .icon { font-size: 3rem; margin-bottom: 0.75rem; }
     .empty-state p { font-size: 0.9rem; }
 
-    /* Modal */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.6);
@@ -140,9 +135,15 @@
 
     .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
 
-    /* Session view */
+    .session-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
     .session-title { font-size: 1.4rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.25rem; }
-    .session-meta { font-size: 0.8rem; color: #64748b; margin-bottom: 1.75rem; }
+    .session-meta { font-size: 0.8rem; color: #64748b; }
 
     .section-header {
       display: flex;
@@ -152,7 +153,6 @@
     }
     .section-header h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; font-weight: 600; }
 
-    /* Scoreboard */
     .scoreboard {
       background: #1e293b;
       border: 1px solid #334155;
@@ -165,7 +165,7 @@
       padding: 0.75rem 1rem;
       text-align: left;
       font-size: 0.875rem;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid #0f172a;
     }
     .scoreboard thead th {
       background: #0f172a;
@@ -177,15 +177,13 @@
     }
     .scoreboard tbody tr:last-child td { border-bottom: none; }
     .scoreboard tbody tr:hover td { background: #243044; }
-    .scoreboard .rank { color: #64748b; font-weight: 500; width: 2rem; }
     .scoreboard .player-name { color: #f1f5f9; font-weight: 600; }
     .scoreboard .score { color: #3b82f6; font-weight: 700; text-align: right; }
     .scoreboard .remove-player { text-align: right; }
-    .rank-1 .player-name::before { content: "🥇 "; }
-    .rank-2 .player-name::before { content: "🥈 "; }
-    .rank-3 .player-name::before { content: "🥉 "; }
+    .rank-1 .player-name::before { content: "\1F947 "; }
+    .rank-2 .player-name::before { content: "\1F948 "; }
+    .rank-3 .player-name::before { content: "\1F949 "; }
 
-    /* Rounds */
     .round-card {
       background: #1e293b;
       border: 1px solid #334155;
@@ -203,8 +201,8 @@
     }
     .round-header:hover { background: #243044; }
     .round-header .round-label { font-size: 0.875rem; font-weight: 600; color: #94a3b8; }
-    .round-header .round-scores-preview { font-size: 0.75rem; color: #64748b; }
-    .round-header .chevron { color: #475569; transition: transform 0.2s; font-size: 0.75rem; }
+    .round-header .round-scores-preview { font-size: 0.75rem; color: #64748b; flex: 1; margin: 0 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .round-header .chevron { color: #475569; transition: transform 0.2s; font-size: 0.75rem; flex-shrink: 0; }
     .round-card.expanded .chevron { transform: rotate(180deg); }
     .round-body { display: none; border-top: 1px solid #334155; }
     .round-card.expanded .round-body { display: block; }
@@ -225,19 +223,9 @@
       padding: 0.5rem 1rem 0.75rem;
     }
 
-    /* Round score entry in modal */
     .score-grid { display: flex; flex-direction: column; gap: 0.625rem; max-height: 50vh; overflow-y: auto; }
-    .score-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .score-row .p-name {
-      flex: 1;
-      font-size: 0.875rem;
-      color: #e2e8f0;
-      font-weight: 500;
-    }
+    .score-row { display: flex; align-items: center; gap: 0.75rem; }
+    .score-row .p-name { flex: 1; font-size: 0.875rem; color: #e2e8f0; font-weight: 500; }
     .score-row input {
       width: 90px;
       background: #0f172a;
@@ -262,6 +250,41 @@
       display: none;
     }
     .alert.show { display: block; }
+
+    .ro-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0c2340;
+      border: 1px solid #1d4ed8;
+      color: #93c5fd;
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+    .ro-banner span { opacity: 0.7; }
+    .ro-banner a { color: #60a5fa; text-decoration: none; font-weight: 600; flex-shrink: 0; }
+    .ro-banner a:hover { text-decoration: underline; }
+
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #16a34a;
+      color: #fff;
+      padding: 0.55rem 1.25rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: transform 0.22s ease;
+      z-index: 300;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
     @media (max-width: 480px) {
       main { padding: 1rem; }
@@ -288,14 +311,19 @@
 
   <!-- Session Detail View -->
   <div class="view" id="sessionView">
-    <div class="session-title" id="sessionName"></div>
-    <div class="session-meta" id="sessionMeta"></div>
+    <div class="session-header-row">
+      <div>
+        <div class="session-title" id="sessionName"></div>
+        <div class="session-meta" id="sessionMeta"></div>
+      </div>
+      <button class="btn sm secondary" id="shareBtn" onclick="shareSession()">&#128279; Share</button>
+    </div>
 
     <div class="section-header">
       <h3>Scoreboard</h3>
       <button class="btn sm secondary" onclick="openAddPlayerModal()">+ Player</button>
     </div>
-    <div class="scoreboard" id="scoreboard">
+    <div class="scoreboard">
       <table>
         <thead><tr><th>Player</th><th style="text-align:right">Total</th><th></th></tr></thead>
         <tbody id="scoreboardBody"></tbody>
@@ -308,11 +336,39 @@
     </div>
     <div id="roundsList"></div>
     <div class="empty-state" id="roundsEmpty" style="display:none">
-      <div class="icon">🎯</div>
+      <div class="icon">&#127919;</div>
       <p>No rounds yet. Add the first round!</p>
     </div>
   </div>
+
+  <!-- Read-only View -->
+  <div class="view" id="roView">
+    <div class="ro-banner">
+      <span>&#128274; Read-only snapshot</span>
+      <a id="roAppLink" href="">Open App</a>
+    </div>
+    <div class="session-title" id="roTitle"></div>
+    <div class="session-meta" id="roMeta"></div>
+
+    <div class="section-header" style="margin-top:1.75rem">
+      <h3>Scoreboard</h3>
+    </div>
+    <div class="scoreboard">
+      <table>
+        <thead><tr><th>Player</th><th style="text-align:right">Total</th></tr></thead>
+        <tbody id="roScoreboardBody"></tbody>
+      </table>
+    </div>
+
+    <div class="section-header">
+      <h3>Rounds</h3>
+    </div>
+    <div id="roRoundsList"></div>
+  </div>
 </main>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <!-- New Session Modal -->
 <div class="modal-overlay" id="newSessionModal">
@@ -346,7 +402,7 @@
   </div>
 </div>
 
-<!-- Add Round Modal -->
+<!-- Add / Edit Round Modal -->
 <div class="modal-overlay" id="addRoundModal">
   <div class="modal">
     <h3 id="addRoundTitle">Add Round</h3>
@@ -359,7 +415,7 @@
   </div>
 </div>
 
-<!-- Delete Session Confirm Modal -->
+<!-- Delete Session Modal -->
 <div class="modal-overlay" id="deleteSessionModal">
   <div class="modal">
     <h3>Delete Session?</h3>
@@ -372,7 +428,6 @@
 </div>
 
 <script>
-  // ── Storage ──────────────────────────────────────────────────────────────
   const STORE_KEY = 'scoreCounterData';
 
   function loadData() {
@@ -388,16 +443,15 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  // ── State ─────────────────────────────────────────────────────────────────
   let data = loadData();
   let currentSessionId = null;
   let editingRoundId = null;
   let pendingDeleteSessionId = null;
 
-  // ── Navigation ────────────────────────────────────────────────────────────
   function showSessions() {
     document.getElementById('sessionsView').classList.add('active');
     document.getElementById('sessionView').classList.remove('active');
+    document.getElementById('roView').classList.remove('active');
     document.getElementById('backBtn').style.display = 'none';
     document.getElementById('headerTitle').textContent = 'Score Counter';
     currentSessionId = null;
@@ -408,15 +462,15 @@
     currentSessionId = id;
     document.getElementById('sessionsView').classList.remove('active');
     document.getElementById('sessionView').classList.add('active');
+    document.getElementById('roView').classList.remove('active');
     document.getElementById('backBtn').style.display = 'block';
     renderSession();
   }
 
-  // ── Sessions ──────────────────────────────────────────────────────────────
   function renderSessions() {
     const el = document.getElementById('sessionsList');
     if (!data.sessions.length) {
-      el.innerHTML = `<div class="empty-state"><div class="icon">🎲</div><p>No sessions yet. Create one to get started!</p></div>`;
+      el.innerHTML = `<div class="empty-state"><div class="icon">&#127922;</div><p>No sessions yet. Create one to get started!</p></div>`;
       return;
     }
     el.innerHTML = data.sessions.slice().reverse().map(s => {
@@ -466,7 +520,6 @@
     else renderSessions();
   }
 
-  // ── Session detail ────────────────────────────────────────────────────────
   function getSession() {
     return data.sessions.find(s => s.id === currentSessionId);
   }
@@ -474,17 +527,15 @@
   function renderSession() {
     const s = getSession();
     if (!s) { showSessions(); return; }
-
     document.getElementById('headerTitle').textContent = s.name;
     document.getElementById('sessionName').textContent = s.name;
     document.getElementById('sessionMeta').textContent =
       `${s.players.length} player${s.players.length !== 1 ? 's' : ''} · ${s.rounds.length} round${s.rounds.length !== 1 ? 's' : ''}`;
-
     renderScoreboard(s);
     renderRounds(s);
   }
 
-  function totals(s) {
+  function calcTotals(s) {
     const t = {};
     s.players.forEach(p => t[p] = 0);
     s.rounds.forEach(r => s.players.forEach(p => t[p] = (t[p] || 0) + (r.scores[p] || 0)));
@@ -492,70 +543,57 @@
   }
 
   function renderScoreboard(s) {
-    const t = totals(s);
+    const t = calcTotals(s);
     const sorted = [...s.players].sort((a, b) => t[b] - t[a]);
     const body = document.getElementById('scoreboardBody');
-
     if (!s.players.length) {
       body.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#475569;padding:1.5rem">No players yet. Add a player to start.</td></tr>`;
       return;
     }
-
-    body.innerHTML = sorted.map((p, i) => {
-      const rankClass = i < 3 ? `rank-${i + 1}` : '';
-      return `
-        <tr class="${rankClass}">
-          <td class="player-name">${esc(p)}</td>
-          <td class="score">${t[p]}</td>
-          <td class="remove-player">
-            <button class="btn sm danger" onclick="removePlayer('${esc(p)}')">✕</button>
-          </td>
-        </tr>`;
-    }).join('');
+    body.innerHTML = sorted.map((p, i) => `
+      <tr class="${i < 3 ? `rank-${i + 1}` : ''}">
+        <td class="player-name">${esc(p)}</td>
+        <td class="score">${t[p]}</td>
+        <td class="remove-player">
+          <button class="btn sm danger" onclick="removePlayer('${esc(p)}')">&#10005;</button>
+        </td>
+      </tr>`).join('');
   }
 
   function renderRounds(s) {
     const list = document.getElementById('roundsList');
     const empty = document.getElementById('roundsEmpty');
-
-    if (!s.rounds.length) {
-      list.innerHTML = '';
-      empty.style.display = 'block';
-      return;
-    }
+    if (!s.rounds.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
     empty.style.display = 'none';
-
-    list.innerHTML = s.rounds.map((r, i) => {
-      const preview = s.players.map(p => `${p}: ${r.scores[p] ?? 0}`).join(' · ');
-      return `
-        <div class="round-card" id="round-${r.id}">
-          <div class="round-header" onclick="toggleRound('${r.id}')">
-            <span class="round-label">Round ${i + 1}</span>
-            <span class="round-scores-preview">${esc(preview)}</span>
-            <span class="chevron">▼</span>
-          </div>
-          <div class="round-body">
-            <div class="round-scores">
-              ${s.players.map(p => `
-                <div class="round-score-row">
-                  <span class="rp-name">${esc(p)}</span>
-                  <span class="rp-score">${r.scores[p] ?? 0}</span>
-                </div>`).join('')}
-            </div>
-            <div class="round-footer">
-              <button class="btn sm secondary" onclick="openEditRoundModal('${r.id}')">Edit</button>
-              <button class="btn sm danger" onclick="deleteRound('${r.id}')">Delete</button>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
+    list.innerHTML = s.rounds.map((r, i) => roundCardHTML(r, i, s.players, true)).join('');
   }
 
-  function toggleRound(id) {
-    document.getElementById(`round-${id}`).classList.toggle('expanded');
+  function roundCardHTML(r, i, players, editable) {
+    const preview = players.map(p => `${p}: ${r.scores[p] ?? 0}`).join(' · ');
+    const id = `rc-${r.id ?? i}`;
+    return `
+      <div class="round-card" id="${id}">
+        <div class="round-header" onclick="document.getElementById('${id}').classList.toggle('expanded')">
+          <span class="round-label">Round ${i + 1}</span>
+          <span class="round-scores-preview">${esc(preview)}</span>
+          <span class="chevron">&#9660;</span>
+        </div>
+        <div class="round-body">
+          <div class="round-scores">
+            ${players.map(p => `
+              <div class="round-score-row">
+                <span class="rp-name">${esc(p)}</span>
+                <span class="rp-score">${r.scores[p] ?? 0}</span>
+              </div>`).join('')}
+          </div>
+          ${editable ? `<div class="round-footer">
+            <button class="btn sm secondary" onclick="openEditRoundModal('${r.id}')">Edit</button>
+            <button class="btn sm danger" onclick="deleteRound('${r.id}')">Delete</button>
+          </div>` : ''}
+        </div>
+      </div>`;
   }
 
-  // ── Players ───────────────────────────────────────────────────────────────
   function openAddPlayerModal() {
     document.getElementById('newPlayerName').value = '';
     hideAlert('addPlayerAlert');
@@ -583,10 +621,9 @@
     renderSession();
   }
 
-  // ── Rounds ────────────────────────────────────────────────────────────────
   function buildScoreGrid(existingScores = {}) {
     const s = getSession();
-    if (!s.players.length) return '<p style="color:#64748b;font-size:0.875rem">Add players first before adding rounds.</p>';
+    if (!s.players.length) return '<p style="color:#64748b;font-size:0.875rem">Add players first.</p>';
     return s.players.map(p => `
       <div class="score-row">
         <span class="p-name">${esc(p)}</span>
@@ -620,24 +657,17 @@
   function saveRound() {
     const s = getSession();
     const scores = {};
-    let valid = true;
-
     for (const p of s.players) {
-      const val = document.getElementById(`score-${p}`)?.value ?? '0';
-      const n = parseInt(val, 10);
-      if (isNaN(n)) { showAlert('addRoundAlert', `Score for "${p}" must be an integer.`); valid = false; break; }
+      const n = parseInt(document.getElementById(`score-${p}`)?.value ?? '0', 10);
+      if (isNaN(n)) { showAlert('addRoundAlert', `Score for "${p}" must be an integer.`); return; }
       scores[p] = n;
     }
-
-    if (!valid) return;
-
     if (editingRoundId) {
       const round = s.rounds.find(r => r.id === editingRoundId);
       if (round) round.scores = scores;
     } else {
       s.rounds.push({ id: uid(), scores });
     }
-
     saveData(data);
     closeModal('addRoundModal');
     renderSession();
@@ -651,44 +681,115 @@
     renderSession();
   }
 
-  // ── Modal helpers ─────────────────────────────────────────────────────────
-  function openModal(id) {
-    document.getElementById(id).classList.add('open');
-  }
-  function closeModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
-  function showAlert(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
-  }
-  function hideAlert(id) {
-    document.getElementById(id).classList.remove('show');
+  async function compress(obj) {
+    const bytes = new TextEncoder().encode(JSON.stringify(obj));
+    const cs = new CompressionStream('deflate-raw');
+    const w = cs.writable.getWriter();
+    w.write(bytes); w.close();
+    const buf = await new Response(cs.readable).arrayBuffer();
+    const arr = new Uint8Array(buf);
+    let bin = '';
+    for (let i = 0; i < arr.length; i++) bin += String.fromCharCode(arr[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   }
 
-  // Close modal on overlay click
+  async function decompress(b64) {
+    const bin = atob(b64.replace(/-/g, '+').replace(/_/g, '/'));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const ds = new DecompressionStream('deflate-raw');
+    const w = ds.writable.getWriter();
+    w.write(bytes); w.close();
+    const buf = await new Response(ds.readable).arrayBuffer();
+    return JSON.parse(new TextDecoder().decode(buf));
+  }
+
+  async function shareSession() {
+    const s = getSession();
+    const btn = document.getElementById('shareBtn');
+    btn.textContent = '…'; btn.disabled = true;
+    try {
+      const compact = { n: s.name, p: s.players, r: s.rounds.map(r => s.players.map(p => r.scores[p] ?? 0)) };
+      const encoded = await compress(compact);
+      const url = location.origin + location.pathname + '?v=' + encoded;
+      try { await navigator.clipboard.writeText(url); showToast('Link copied!'); }
+      catch { prompt('Copy this link:', url); }
+    } finally {
+      btn.textContent = '🔗 Share'; btn.disabled = false;
+    }
+  }
+
+  async function tryReadOnly() {
+    const param = new URLSearchParams(location.search).get('v');
+    if (!param) return false;
+    try {
+      const compact = await decompress(param);
+      const s = {
+        name: compact.n,
+        players: compact.p,
+        rounds: compact.r.map(arr => ({ scores: Object.fromEntries(compact.p.map((p, i) => [p, arr[i]])) }))
+      };
+      renderReadOnly(s);
+      return true;
+    } catch { return false; }
+  }
+
+  function renderReadOnly(s) {
+    document.getElementById('sessionsView').classList.remove('active');
+    document.getElementById('sessionView').classList.remove('active');
+    document.getElementById('roView').classList.add('active');
+    document.getElementById('headerTitle').textContent = s.name;
+    document.getElementById('roAppLink').href = location.origin + location.pathname;
+    document.getElementById('roTitle').textContent = s.name;
+    document.getElementById('roMeta').textContent =
+      `${s.players.length} player${s.players.length !== 1 ? 's' : ''} · ${s.rounds.length} round${s.rounds.length !== 1 ? 's' : ''}`;
+
+    const t = {};
+    s.players.forEach(p => t[p] = 0);
+    s.rounds.forEach(r => s.players.forEach(p => t[p] = (t[p] || 0) + (r.scores[p] || 0)));
+    const sorted = [...s.players].sort((a, b) => t[b] - t[a]);
+
+    document.getElementById('roScoreboardBody').innerHTML = sorted.map((p, i) => `
+      <tr class="${i < 3 ? `rank-${i + 1}` : ''}">
+        <td class="player-name">${esc(p)}</td>
+        <td class="score">${t[p]}</td>
+      </tr>`).join('');
+
+    const list = document.getElementById('roRoundsList');
+    if (!s.rounds.length) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">&#127919;</div><p>No rounds yet.</p></div>';
+      return;
+    }
+    list.innerHTML = s.rounds.map((r, i) => roundCardHTML(r, i, s.players, false)).join('');
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function showAlert(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.add('show'); }
+  function hideAlert(id) { document.getElementById(id).classList.remove('show'); }
+
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
   });
 
-  // Enter key support
   document.getElementById('newSessionName').addEventListener('keydown', e => { if (e.key === 'Enter') createSession(); });
   document.getElementById('newPlayerName').addEventListener('keydown', e => { if (e.key === 'Enter') addPlayer(); });
 
-  // ── Escape helper ─────────────────────────────────────────────────────────
-  function esc(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
   }
 
-  // ── Boot ──────────────────────────────────────────────────────────────────
-  renderSessions();
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  tryReadOnly().then(isRO => { if (!isRO) renderSessions(); });
 </script>
 </body>
 </html>
