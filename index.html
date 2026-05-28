@@ -180,9 +180,9 @@
     .scoreboard .player-name { color: #f1f5f9; font-weight: 600; }
     .scoreboard .score { color: #3b82f6; font-weight: 700; text-align: right; }
     .scoreboard .remove-player { text-align: right; }
-    .rank-1 .player-name::before { content: "🥇 "; }
-    .rank-2 .player-name::before { content: "🥈 "; }
-    .rank-3 .player-name::before { content: "🥉 "; }
+    .rank-1 .player-name::before { content: "\1F947 "; }
+    .rank-2 .player-name::before { content: "\1F948 "; }
+    .rank-3 .player-name::before { content: "\1F949 "; }
 
     .round-card {
       background: #1e293b;
@@ -251,7 +251,6 @@
     }
     .alert.show { display: block; }
 
-    /* Read-only view */
     .ro-banner {
       display: flex;
       align-items: center;
@@ -270,7 +269,6 @@
     .ro-banner a { color: #60a5fa; text-decoration: none; font-weight: 600; flex-shrink: 0; }
     .ro-banner a:hover { text-decoration: underline; }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -338,7 +336,7 @@
     </div>
     <div id="roundsList"></div>
     <div class="empty-state" id="roundsEmpty" style="display:none">
-      <div class="icon">🎯</div>
+      <div class="icon">&#127919;</div>
       <p>No rounds yet. Add the first round!</p>
     </div>
   </div>
@@ -430,7 +428,6 @@
 </div>
 
 <script>
-  // ── Storage ───────────────────────────────────────────────────────────────
   const STORE_KEY = 'scoreCounterData';
 
   function loadData() {
@@ -446,13 +443,11 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
-  // ── State ─────────────────────────────────────────────────────────────────
   let data = loadData();
   let currentSessionId = null;
   let editingRoundId = null;
   let pendingDeleteSessionId = null;
 
-  // ── Navigation ────────────────────────────────────────────────────────────
   function showSessions() {
     document.getElementById('sessionsView').classList.add('active');
     document.getElementById('sessionView').classList.remove('active');
@@ -472,11 +467,10 @@
     renderSession();
   }
 
-  // ── Sessions ──────────────────────────────────────────────────────────────
   function renderSessions() {
     const el = document.getElementById('sessionsList');
     if (!data.sessions.length) {
-      el.innerHTML = `<div class="empty-state"><div class="icon">🎲</div><p>No sessions yet. Create one to get started!</p></div>`;
+      el.innerHTML = `<div class="empty-state"><div class="icon">&#127922;</div><p>No sessions yet. Create one to get started!</p></div>`;
       return;
     }
     el.innerHTML = data.sessions.slice().reverse().map(s => {
@@ -526,7 +520,6 @@
     else renderSessions();
   }
 
-  // ── Session detail ────────────────────────────────────────────────────────
   function getSession() {
     return data.sessions.find(s => s.id === currentSessionId);
   }
@@ -562,7 +555,7 @@
         <td class="player-name">${esc(p)}</td>
         <td class="score">${t[p]}</td>
         <td class="remove-player">
-          <button class="btn sm danger" onclick="removePlayer('${esc(p)}')">✕</button>
+          <button class="btn sm danger" onclick="removePlayer('${esc(p)}')">&#10005;</button>
         </td>
       </tr>`).join('');
   }
@@ -583,7 +576,7 @@
         <div class="round-header" onclick="document.getElementById('${id}').classList.toggle('expanded')">
           <span class="round-label">Round ${i + 1}</span>
           <span class="round-scores-preview">${esc(preview)}</span>
-          <span class="chevron">▼</span>
+          <span class="chevron">&#9660;</span>
         </div>
         <div class="round-body">
           <div class="round-scores">
@@ -601,7 +594,6 @@
       </div>`;
   }
 
-  // ── Players ───────────────────────────────────────────────────────────────
   function openAddPlayerModal() {
     document.getElementById('newPlayerName').value = '';
     hideAlert('addPlayerAlert');
@@ -629,7 +621,6 @@
     renderSession();
   }
 
-  // ── Rounds ────────────────────────────────────────────────────────────────
   function buildScoreGrid(existingScores = {}) {
     const s = getSession();
     if (!s.players.length) return '<p style="color:#64748b;font-size:0.875rem">Add players first.</p>';
@@ -690,13 +681,11 @@
     renderSession();
   }
 
-  // ── Sharing ───────────────────────────────────────────────────────────────
   async function compress(obj) {
     const bytes = new TextEncoder().encode(JSON.stringify(obj));
     const cs = new CompressionStream('deflate-raw');
     const w = cs.writable.getWriter();
-    w.write(bytes);
-    w.close();
+    w.write(bytes); w.close();
     const buf = await new Response(cs.readable).arrayBuffer();
     const arr = new Uint8Array(buf);
     let bin = '';
@@ -710,8 +699,7 @@
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     const ds = new DecompressionStream('deflate-raw');
     const w = ds.writable.getWriter();
-    w.write(bytes);
-    w.close();
+    w.write(bytes); w.close();
     const buf = await new Response(ds.readable).arrayBuffer();
     return JSON.parse(new TextDecoder().decode(buf));
   }
@@ -719,26 +707,18 @@
   async function shareSession() {
     const s = getSession();
     const btn = document.getElementById('shareBtn');
-    btn.textContent = '…';
-    btn.disabled = true;
+    btn.textContent = '…'; btn.disabled = true;
     try {
-      // compact format: {n, p, r} where r is array of score arrays (indexed by player order)
       const compact = { n: s.name, p: s.players, r: s.rounds.map(r => s.players.map(p => r.scores[p] ?? 0)) };
       const encoded = await compress(compact);
       const url = location.origin + location.pathname + '?v=' + encoded;
-      try {
-        await navigator.clipboard.writeText(url);
-        showToast('Link copied!');
-      } catch {
-        prompt('Copy this link:', url);
-      }
+      try { await navigator.clipboard.writeText(url); showToast('Link copied!'); }
+      catch { prompt('Copy this link:', url); }
     } finally {
-      btn.textContent = '🔗 Share';
-      btn.disabled = false;
+      btn.textContent = '🔗 Share'; btn.disabled = false;
     }
   }
 
-  // ── Read-only view ────────────────────────────────────────────────────────
   async function tryReadOnly() {
     const param = new URLSearchParams(location.search).get('v');
     if (!param) return false;
@@ -751,9 +731,7 @@
       };
       renderReadOnly(s);
       return true;
-    } catch {
-      return false;
-    }
+    } catch { return false; }
   }
 
   function renderReadOnly(s) {
@@ -779,13 +757,12 @@
 
     const list = document.getElementById('roRoundsList');
     if (!s.rounds.length) {
-      list.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No rounds yet.</p></div>';
+      list.innerHTML = '<div class="empty-state"><div class="icon">&#127919;</div><p>No rounds yet.</p></div>';
       return;
     }
     list.innerHTML = s.rounds.map((r, i) => roundCardHTML(r, i, s.players, false)).join('');
   }
 
-  // ── Modal helpers ─────────────────────────────────────────────────────────
   function openModal(id) { document.getElementById(id).classList.add('open'); }
   function closeModal(id) { document.getElementById(id).classList.remove('open'); }
   function showAlert(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.add('show'); }
@@ -798,24 +775,20 @@
   document.getElementById('newSessionName').addEventListener('keydown', e => { if (e.key === 'Enter') createSession(); });
   document.getElementById('newPlayerName').addEventListener('keydown', e => { if (e.key === 'Enter') addPlayer(); });
 
-  // ── Toast ─────────────────────────────────────────────────────────────────
   let toastTimer;
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
   }
 
-  // ── Escape helper ─────────────────────────────────────────────────────────
   function esc(str) {
     return String(str)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  // ── Boot ──────────────────────────────────────────────────────────────────
   tryReadOnly().then(isRO => { if (!isRO) renderSessions(); });
 </script>
 </body>
